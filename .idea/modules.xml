@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/soulmate.iml" filepath="$PROJECT_DIR$/.idea/soulmate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/soulmate.soulmate.main.iml" filepath="$PROJECT_DIR$/.idea/modules/soulmate.soulmate.main.iml" />
     </modules>
   </component>
 </project>
