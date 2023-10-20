@@ -1,10 +1,14 @@
 package com.soulmate.domain;
 
+import com.soulmate.domain.attachFile.PetAttachFile;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,7 +30,9 @@ public class Pet extends BaseTimeEntity {
     private boolean neutral;
     @Lob
     private String desc;
-    private String photo;
+
+    @OneToMany(mappedBy = "pet")
+    private List<PetAttachFile> attachFiles = new ArrayList<>();
 
     @Builder
     public Pet(Long id, Member member, String name, String kind, int weight, int age, String sex, boolean neutral, String desc, String photo) {
@@ -39,6 +45,5 @@ public class Pet extends BaseTimeEntity {
         this.sex = sex;
         this.neutral = neutral;
         this.desc = desc;
-        this.photo = photo;
     }
 }
