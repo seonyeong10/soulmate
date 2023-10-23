@@ -23,19 +23,21 @@ public class Member extends BaseTimeEntity {
     private String name;
     private String nick;
     private String mobile;
+    private String picture;
     @Enumerated(EnumType.STRING)
     private PlatformType platformType; //enum
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pet> pets = new ArrayList<>();
 
     @Builder
-    public Member(Long id, String email, String password, String name, String nick, String mobile, PlatformType platformType) {
+    public Member(Long id, String email, String password, String name, String nick, String mobile, String picture, PlatformType platformType) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.nick = nick;
         this.mobile = mobile;
+        this.picture = picture;
         this.platformType = platformType;
     }
 }

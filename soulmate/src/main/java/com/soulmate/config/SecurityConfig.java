@@ -19,7 +19,7 @@ public class SecurityConfig {
                 //페이지별 권한 추가
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 //사용자 정의 로그인
-                .formLogin(form -> form.loginPage("/login").permitAll().loginProcessingUrl("/api/login").defaultSuccessUrl("/"));
+                .formLogin(form -> form.loginPage("/auth").permitAll().loginProcessingUrl("/api/auth").defaultSuccessUrl("/"));
         return http.build();
     }
 }

@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Soulmate auth</title>
+</head>
+<body>
+    <a href="/">Home</a>
+    <div><button id="oauth-google" onclick="onClickLogin('google')">Google Login</button></div>
+</body>
+<script>
+    function onClickLogin(platform) {
+        console.log("platform", platform);
+        window.open("http://localhost:8080/api/v1/auth/code/" + platform);
+    }
+</script>
+</html>
