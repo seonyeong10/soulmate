@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class OAuthApiController {
     private final OAuthService oAuthService;
 
@@ -38,10 +40,19 @@ public class OAuthApiController {
     public void callback(
             @PathVariable(name = "platform") String platform,
             @RequestParam(name = "code") String code,
+            @RequestParam(name = "state", required = false) String state,
+            @RequestParam(name = "error", required = false) String error,
+            @RequestParam(name = "errorDesc", required = false) String errorDesc,
             HttpServletRequest request,
             HttpServletResponse response
     ) throws JsonProcessingException, IOException {
         PlatformType platformType = PlatformType.valueOf(platform.toUpperCase());
+
+        if (error != null) {
+            log.error(error + " " + errorDesc);
+            response.sendRedirect("/");
+            return;
+        }
 
         UserResDto loginUser = oAuthService.oAuthLogin(platformType, code);
 
