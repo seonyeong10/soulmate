@@ -11,7 +11,7 @@
 <script>
     function onClickLogin(platform) {
         console.log("platform", platform);
-        window.open("http://localhost:8080/api/v1/auth/code/" + platform);
+        location.href = "http://localhost:8080/api/v1/auth/code/" + platform;
     }
 </script>
 </html>

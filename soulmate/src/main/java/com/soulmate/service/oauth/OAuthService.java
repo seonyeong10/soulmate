@@ -6,6 +6,8 @@ import com.soulmate.domain.enums.PlatformType;
 import com.soulmate.domain.repository.MemberRepository;
 import com.soulmate.web.dto.oauth.GoogleOAuthToken;
 import com.soulmate.web.dto.oauth.GoogleUser;
+import com.soulmate.web.dto.oauth.UserResDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +41,8 @@ public class OAuthService {
     /**
      * 사용자 정보를 받아 로그인 하기
      */
-    public String oAuthLogin(PlatformType platformType, String code) throws JsonProcessingException {
-        String message = "fail";
+    public UserResDto oAuthLogin(PlatformType platformType, String code) throws JsonProcessingException {
+        UserResDto user;
 
         switch (platformType) {
             case GOOGLE -> {
@@ -59,20 +61,20 @@ public class OAuthService {
 
                 //다시 JSON 형식의 응답을 GoogleUser에 담는다.
                 GoogleUser googleUser = googleOAuth.getGoogleUserInfo(userInfoResponse);
-                log.info("googleUser >> " + googleUser.toString());
+                //log.info("googleUser >> " + googleUser.toString());
 
                 //등록된 회원인지 확인하고, 신규 회원이면 저장한다.
-                Member member = memberRepository.findByEmail(googleUser.getEmail()).orElse(null);
+                user = memberRepository.findByEmail(googleUser.getEmail()).stream()
+                        .findAny().map(UserResDto::new)
+                        .orElse(null);
 
-                if (member == null) {
-                    member = memberRepository.save(googleUser.toMember());
+                if (user == null) {
+                    user = new UserResDto(memberRepository.save(googleUser.toMember()));
                 }
 
-                message = "success";
+                return user;
             }
             default -> throw new IllegalArgumentException("알 수 없는 로그인 형식입니다.");
         }
-
-        return message;
     }
 }
