@@ -1,0 +1,20 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Soulmate auth</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+</head>
+<body>
+<a href="/">Home</a>
+Login Fail
+</body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const message =  /*[[${desc}]]*/
+    alert('login failed.\nERROR: ' + message);
+
+    location.replace('/');
+    /*]]>*/
+</script>
+</html>

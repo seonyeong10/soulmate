@@ -72,7 +72,7 @@ public class OAuthService {
                 ResponseEntity<String> userInfoResponse = googleOAuth.requestUserInfo(googleOAuthToken);
 
                 //다시 JSON 형식의 응답을 GoogleUser에 담는다.
-                GoogleUser googleUser = googleOAuth.getGoogleUserInfo(userInfoResponse);
+                GoogleUser googleUser = googleOAuth.getUserInfo(userInfoResponse);
                 //log.info("googleUser >> " + googleUser.toString());
 
                 //등록된 회원인지 확인하고, 신규 회원이면 저장한다.
@@ -103,7 +103,7 @@ public class OAuthService {
                 log.info("naver userInfoResponse >>> " + userInfoResponse);
 
                 //JSON 형식의 응답을 NaverUser 객체로 만들기
-                NaverUser naverUser = naverOAuth.getNaverUserInfo(userInfoResponse);
+                NaverUser naverUser = naverOAuth.getUserInfo(userInfoResponse);
                 
                 //등록된 회원인지 확인하고, 신규 회원이면 저장하기
                 user = memberRepository.findByEmail(naverUser.getEmail()).stream()
@@ -133,11 +133,17 @@ public class OAuthService {
                 log.info("kakao userInfoResponse >>> " + userInfoResponse);
 
                 //JSON 형식의 응답을 KakaoUser 객체에 담기
-                KakaoUser kakaoUser = kakaoOAuth.getKakaoUserInfo(userInfoResponse);
-                System.out.println(kakaoUser.toString());
+                KakaoUser kakaoUser = kakaoOAuth.getUserInfo(userInfoResponse);
 
                 //등록된 회원인지 확인하고, 신규 회원이면 저장하기
-                return null;
+                user = memberRepository.findByEmail(kakaoUser.getEmail()).stream()
+                        .findAny().map(UserResDto::new)
+                        .orElse(null);
+
+                if (user == null) {
+                    user = new UserResDto(memberRepository.save(kakaoUser.toMember()));
+                }
+                return user;
             }
             default -> throw new IllegalArgumentException("알 수 없는 로그인 형식입니다.");
         }

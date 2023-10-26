@@ -60,6 +60,7 @@ public class KakaoOAuth implements SocialOAuth {
         return redirectURL;
     }
 
+    @Override
     public ResponseEntity<String> requestAccessToken(String code) {
         //POST 요청
         String KAKAO_TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
@@ -80,6 +81,7 @@ public class KakaoOAuth implements SocialOAuth {
         return response;
     }
 
+    @Override
     public KakaoOAuthToken getOAuthToken(ResponseEntity<String> response) throws JsonProcessingException {
         return objectMapper.readValue(response.getBody(), KakaoOAuthToken.class);
     }
@@ -97,7 +99,8 @@ public class KakaoOAuth implements SocialOAuth {
         return response;
     }
 
-    public KakaoUser getKakaoUserInfo(ResponseEntity<String> response) throws JsonProcessingException {
+    @Override
+    public KakaoUser getUserInfo(ResponseEntity<String> response) throws JsonProcessingException {
         JsonNode kakaoUserNode = objectMapper.readTree(response.getBody());
 
         KakaoUser kakaoUser = objectMapper.readValue(kakaoUserNode.get("kakao_account").toString(), KakaoUser.class);

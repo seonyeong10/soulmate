@@ -61,6 +61,7 @@ public class NaverOAuth implements SocialOAuth {
      * @param code callback url 로 받은 code
      * @return 접큰 토큰
      */
+    @Override
     public ResponseEntity<String> requestAccessToken(String code) {
         String NAVER_TOKEN_REQUEST_URL = "https://nid.naver.com/oauth2.0/token";
 
@@ -91,6 +92,7 @@ public class NaverOAuth implements SocialOAuth {
      * @return
      * @throws JsonProcessingException
      */
+    @Override
     public NaverOAuthToken getOAuthToken(ResponseEntity<String> response) throws JsonProcessingException {
         return objectMapper.readValue(response.getBody(), NaverOAuthToken.class);
     }
@@ -118,7 +120,8 @@ public class NaverOAuth implements SocialOAuth {
      * @param response
      * @return
      */
-    public NaverUser getNaverUserInfo(ResponseEntity<String> response) throws JsonProcessingException {
+    @Override
+    public NaverUser getUserInfo(ResponseEntity<String> response) throws JsonProcessingException {
         JsonNode naverUserNode = objectMapper.readTree(response.getBody());
         String message = naverUserNode.get("message").textValue();
 

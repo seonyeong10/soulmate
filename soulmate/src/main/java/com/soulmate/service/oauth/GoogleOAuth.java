@@ -56,6 +56,7 @@ public class GoogleOAuth implements SocialOAuth {
      * @param code
      * @return
      */
+    @Override
     public ResponseEntity<String> requestAccessToken(String code) {
         String GOOGLE_TOKEN_REQUEST_URL = "https://oauth2.googleapis.com/token";
 
@@ -79,6 +80,7 @@ public class GoogleOAuth implements SocialOAuth {
      * @param response
      * @return
      */
+    @Override
     public GoogleOAuthToken getOAuthToken(ResponseEntity<String> response) throws JsonProcessingException {
         return objectMapper.readValue(response.getBody(), GoogleOAuthToken.class);
     }
@@ -104,7 +106,8 @@ public class GoogleOAuth implements SocialOAuth {
     /**
      * 사용자 정보를 GoogleUser 객체로 반환하기
      */
-    public GoogleUser getGoogleUserInfo(ResponseEntity<String> response) throws JsonProcessingException {
+    @Override
+    public GoogleUser getUserInfo(ResponseEntity<String> response) throws JsonProcessingException {
         return objectMapper.readValue(response.getBody(), GoogleUser.class);
     }
 }
