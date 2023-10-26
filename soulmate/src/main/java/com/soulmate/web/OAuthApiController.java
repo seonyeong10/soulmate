@@ -42,7 +42,8 @@ public class OAuthApiController {
             @RequestParam(name = "code") String code,
             @RequestParam(name = "state", required = false) String state,
             @RequestParam(name = "error", required = false) String error,
-            @RequestParam(name = "errorDesc", required = false) String errorDesc,
+            //@RequestParam(name = "errorDesc", required = false) String errorDesc,
+            @RequestParam(name = "error_description", required = false) String errorDesc,
             HttpServletRequest request,
             HttpServletResponse response
     ) throws JsonProcessingException, IOException {
@@ -57,10 +58,10 @@ public class OAuthApiController {
         UserResDto loginUser = oAuthService.oAuthLogin(platformType, code);
 
         //세션 저장하기
-        request.getSession().invalidate(); //세션 초기화
-        HttpSession session = request.getSession(true); //session이 없으면 생성
-        session.setAttribute("user", loginUser);
-        session.setMaxInactiveInterval(1800); //30분
+//        request.getSession().invalidate(); //세션 초기화
+//        HttpSession session = request.getSession(true); //session이 없으면 생성
+//        session.setAttribute("user", loginUser);
+//        session.setMaxInactiveInterval(1800); //30분
 
         //리디렉션
         response.sendRedirect("/");

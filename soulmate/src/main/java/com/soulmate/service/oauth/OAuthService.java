@@ -23,6 +23,8 @@ public class OAuthService {
 
     private final NaverOAuth naverOAuth;
 
+    private final KakaoOAuth kakaoOAuth;
+
     private final HttpServletResponse response;
     private final MemberRepository memberRepository;
 
@@ -36,6 +38,10 @@ public class OAuthService {
             }
             case NAVER -> {
                 redirectURL = naverOAuth.getOAuthRedirectURL();
+                break;
+            }
+            case KAKAO -> {
+                redirectURL = kakaoOAuth.getOAuthRedirectURL();
                 break;
             }
             default -> throw new IllegalArgumentException("알 수 없는 로그인 형식입니다.");
@@ -109,6 +115,29 @@ public class OAuthService {
                 }
 
                 return user;
+            }
+            case KAKAO -> {
+                //액세스 토큰 받기
+                ResponseEntity<String> accessTokenResponse = kakaoOAuth.requestAccessToken(code);
+                log.info("kakao accessToken >>> " + accessTokenResponse);
+
+                if (accessTokenResponse == null) {
+                    throw new IllegalArgumentException("잘못된 로그인 입니다.");
+                }
+
+                //JSON 형식의 접근 토큰을 KakaoOAuthToken에 담기
+                KakaoOAuthToken kakaoOAuthToken = kakaoOAuth.getOAuthToken(accessTokenResponse);
+
+                //접근 토큰으로 사용자 정보 받기
+                ResponseEntity<String> userInfoResponse = kakaoOAuth.requestUserInfo(kakaoOAuthToken);
+                log.info("kakao userInfoResponse >>> " + userInfoResponse);
+
+                //JSON 형식의 응답을 KakaoUser 객체에 담기
+                KakaoUser kakaoUser = kakaoOAuth.getKakaoUserInfo(userInfoResponse);
+                System.out.println(kakaoUser.toString());
+
+                //등록된 회원인지 확인하고, 신규 회원이면 저장하기
+                return null;
             }
             default -> throw new IllegalArgumentException("알 수 없는 로그인 형식입니다.");
         }
