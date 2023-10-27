@@ -1,5 +1,6 @@
 package com.soulmate.domain;
 
+import com.soulmate.domain.attachFile.AttachFile;
 import com.soulmate.domain.attachFile.DesignerAttachFile;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -27,10 +28,10 @@ public class Designer extends BaseTimeEntity {
     private LocalDateTime leaveDate;
     private String status;
     @OneToMany(mappedBy = "designer")
-    private List<DesignerAttachFile> files = new ArrayList<>();
+    private List<DesignerAttachFile> attachFiles = new ArrayList<>();
 
     @Builder
-    public Designer(Long id, String empNo, String password, String name, String mobile, LocalDateTime enterDate, LocalDateTime leaveDate, String status, List<DesignerAttachFile> files) {
+    public Designer(Long id, String empNo, String password, String name, String mobile, LocalDateTime enterDate, LocalDateTime leaveDate, String status, List<DesignerAttachFile> attachFiles) {
         this.id = id;
         this.empNo = empNo;
         this.password = password;
@@ -39,6 +40,6 @@ public class Designer extends BaseTimeEntity {
         this.enterDate = enterDate;
         this.leaveDate = leaveDate;
         this.status = status;
-        this.files = files;
+        this.attachFiles = attachFiles;
     }
 }

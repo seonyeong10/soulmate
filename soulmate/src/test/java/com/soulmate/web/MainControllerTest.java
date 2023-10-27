@@ -1,6 +1,8 @@
 package com.soulmate.web;
 
 import com.soulmate.domain.*;
+import com.soulmate.domain.attachFile.AttachFile;
+import com.soulmate.domain.attachFile.PetAttachFile;
 import com.soulmate.domain.repository.AttachFileRepository;
 import com.soulmate.domain.repository.DesignerRepository;
 import com.soulmate.domain.repository.PetRepository;
@@ -29,6 +31,10 @@ class MainControllerTest {
         //given
 
         //when
+        AttachFile file = AttachFile.builder().originalName("org").build();
+        PetAttachFile petAttachFile = file.toPetFile();
+
+        System.out.println(petAttachFile.getOriginalName());
 
         //then
         System.out.println("fin~");

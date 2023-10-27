@@ -2,23 +2,25 @@ package com.soulmate.domain.attachFile;
 
 import com.soulmate.domain.Pet;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue("P")
+@SuperBuilder
 public class PetAttachFile extends AttachFile {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reference_id")
+    @JoinColumn(name = "pet_id")
     private Pet pet;
 
-    @Builder
-    public PetAttachFile(Long id, String original_name, String saved_name, String dir, Pet pet) {
-        super(id, original_name, saved_name, dir);
+    public PetAttachFile(AttachFile file) {
+        super(file.getId(), file.getSeq(), file.getOriginalName(), file.getSavedName(), file.getDir());
+    }
+
+    public void addPet(Pet pet) {
+        pet.addFile(this);
         this.pet = pet;
     }
 }

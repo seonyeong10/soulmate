@@ -1,28 +1,33 @@
 package com.soulmate.domain.attachFile;
 
+import com.soulmate.domain.Designer;
+import com.soulmate.domain.Pet;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@SuperBuilder
 public class AttachFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attach_file_id")
     private Long id;
-    private String original_name;
-    private String saved_name;
+
+    private int seq;
+
+    private String originalName;
+
+    private String savedName;
+
     private String dir;
 
-    public AttachFile(Long id, String original_name, String saved_name, String dir) {
-        this.id = id;
-        this.original_name = original_name;
-        this.saved_name = saved_name;
-        this.dir = dir;
+    public PetAttachFile toPetFile() {
+        return new PetAttachFile(this);
     }
 }

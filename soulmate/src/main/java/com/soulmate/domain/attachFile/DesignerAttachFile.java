@@ -13,12 +13,6 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue("D")
 public class DesignerAttachFile extends AttachFile {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reference_id")
+    @JoinColumn(name = "designer_id")
     private Designer designer;
-
-    @Builder
-    public DesignerAttachFile(Long id, String original_name, String saved_name, String dir, Designer designer) {
-        super(id, original_name, saved_name, dir);
-        this.designer = designer;
-    }
 }

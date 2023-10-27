@@ -1,0 +1,52 @@
+package com.soulmate.service;
+
+import com.soulmate.domain.Member;
+import com.soulmate.domain.Pet;
+import com.soulmate.domain.attachFile.AttachFile;
+import com.soulmate.domain.attachFile.PetAttachFile;
+import com.soulmate.domain.repository.AttachFileRepository;
+import com.soulmate.domain.repository.MemberRepository;
+import com.soulmate.domain.repository.PetRepository;
+import com.soulmate.web.dto.request.PetReqDto;
+import com.soulmate.web.dto.response.ResultResDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class PetService {
+    private final PetRepository petRepository;
+
+    private final MemberRepository memberRepository;
+
+    private final AttachFileRepository fileRepository;
+
+    private final FileUtil fileUtil;
+
+    public Long register(PetReqDto request, List<MultipartFile> files, Long memberId) throws IOException {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다. member_id = " + memberId));
+
+        Pet pet = request.toPetEntity();
+        pet.addGuardian(member);
+
+        Pet saved = petRepository.save(pet);
+
+        if (files != null) {
+            //첨부파일 등록하기
+            List<PetAttachFile> petAttachFiles = fileUtil.upload(files, "pet").stream()
+                    .map(f -> f.toPetFile())
+                    .collect(Collectors.toList());
+
+            petAttachFiles.forEach(f -> f.addPet(saved));
+            fileRepository.saveAll(petAttachFiles);
+        }
+
+        return saved.getId();
+    }
+}

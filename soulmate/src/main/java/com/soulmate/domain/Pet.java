@@ -1,5 +1,6 @@
 package com.soulmate.domain;
 
+import com.soulmate.domain.attachFile.AttachFile;
 import com.soulmate.domain.attachFile.PetAttachFile;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -45,5 +46,14 @@ public class Pet extends BaseTimeEntity {
         this.sex = sex;
         this.neutral = neutral;
         this.desc = desc;
+    }
+
+    //== 연관관계 메서드 ==//
+    public void addGuardian(Member member) {
+        this.member = member;
+    }
+
+    public void addFile(PetAttachFile file) {
+        attachFiles.add(file);
     }
 }
