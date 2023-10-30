@@ -47,4 +47,24 @@ public class FileUtil {
 
         return attachFiles;
     }
+
+    public AttachFile uploadOne(MultipartFile file, String type) throws IOException {
+        Path path = Paths.get(BASE_DIR + File.separator + type);
+        String originalName = file.getOriginalFilename();
+        String extension = originalName.substring(originalName.lastIndexOf("."));
+
+        AttachFile saved = AttachFile.builder()
+                .seq(0)
+                .savedName(LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli() + extension)
+                .originalName(originalName)
+                .dir(BASE_DIR)
+                .build();
+
+        Path savePath = Paths.get(BASE_DIR + File.separator + type + File.separator + saved.getSavedName());
+
+        if (!Files.isDirectory(path)) Files.createDirectories(path);
+        file.transferTo(new File(savePath.toString())); //파일 저장
+
+        return saved;
+    }
 }

@@ -17,7 +17,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 //페이지별 권한 추가
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/my/*").hasRole("USER")
+                        .anyRequest().permitAll())
                 //사용자 정의 로그인
                 .formLogin(form -> form.loginPage("/auth").permitAll().loginProcessingUrl("/api/auth").defaultSuccessUrl("/"));
         return http.build();

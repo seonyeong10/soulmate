@@ -58,11 +58,10 @@ class PetServiceTest {
                 .weight(5)
                 .build();
 
-        List<MultipartFile> files = new ArrayList<>();
-        files.add(new MockMultipartFile("file", "pet.txt", MediaType.TEXT_PLAIN_VALUE, ":)".getBytes()));
+        MultipartFile file = new MockMultipartFile("file", "pet.txt", MediaType.TEXT_PLAIN_VALUE, ":)".getBytes());
         
         //when
-        Long savedId = petService.register(request, files, member.getId());
+        Long savedId = petService.register(request, file, member.getId());
         Pet pet = petRepository.findById(savedId).orElseThrow(() -> new NoSuchElementException("반려동물이 존재하지 않습니다. pet_id = " + savedId));
 
         //then

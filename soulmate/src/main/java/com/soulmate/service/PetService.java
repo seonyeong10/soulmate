@@ -29,7 +29,7 @@ public class PetService {
 
     private final FileUtil fileUtil;
 
-    public Long register(PetReqDto request, List<MultipartFile> files, Long memberId) throws IOException {
+    public Long register(PetReqDto request, MultipartFile file, Long memberId) throws IOException {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다. member_id = " + memberId));
 
         Pet pet = request.toPetEntity();
@@ -37,14 +37,12 @@ public class PetService {
 
         Pet saved = petRepository.save(pet);
 
-        if (files != null) {
+        if (file != null) {
             //첨부파일 등록하기
-            List<PetAttachFile> petAttachFiles = fileUtil.upload(files, "pet").stream()
-                    .map(f -> f.toPetFile())
-                    .collect(Collectors.toList());
+            PetAttachFile petAttachFile = fileUtil.uploadOne(file, "pet").toPetFile();
+            petAttachFile.addPet(saved);
 
-            petAttachFiles.forEach(f -> f.addPet(saved));
-            fileRepository.saveAll(petAttachFiles);
+            fileRepository.save(petAttachFile);
         }
 
         return saved.getId();
