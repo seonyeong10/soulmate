@@ -12,4 +12,9 @@ public class MainController {
     public String main() {
         return "main";
     }
+
+    @GetMapping("/my")
+    public String myPage() {
+        return "my/my";
+    }
 }

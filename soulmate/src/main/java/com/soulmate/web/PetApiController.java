@@ -3,20 +3,20 @@ package com.soulmate.web;
 import com.soulmate.service.PetService;
 import com.soulmate.web.dto.oauth.UserResDto;
 import com.soulmate.web.dto.request.PetReqDto;
-import com.soulmate.web.dto.response.ResultResDto;
+import com.soulmate.web.dto.response.ErrorResDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.naming.Binding;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,32 +31,41 @@ public class PetApiController {
     private final Validator validator;
 
     @PostMapping("/edit")
-    public ResponseEntity<Object> register(
+    public ResponseEntity register(
             @RequestPart(name = "pet") PetReqDto params,
             @RequestPart(name = "file", required = false) MultipartFile file,
             BindingResult bindingResult,
             HttpServletRequest request
     ) throws IOException {
-        //유효성 검사하기
-        validator.validate(params, bindingResult);
-
         HttpSession session = request.getSession();
         UserResDto loginUser = (UserResDto) session.getAttribute("user");
 
-        System.out.println("logined : " + loginUser);
+        //System.out.println("logined : " + loginUser);
+        System.out.printf("params: %s, file: %s\n", params.toString(), file.getOriginalFilename());
 
-        if (bindingResult.hasErrors()) {
-            for (ObjectError err : bindingResult.getAllErrors()) {
-                log.info(err.getObjectName() + err.getDefaultMessage());
-
-                //사용자에게 보여줄 메시지 처리하기
-            }
-
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().get(0).getDefaultMessage());
-        }
-
+        //사용자 정보 없음
         if (loginUser == null) {
             return ResponseEntity.badRequest().body("로그인 후 이용 가능합니다.");
+        }
+
+        //유효성 검사하기
+        validator.validate(params, bindingResult);
+
+        //유효하지 않은 파라미터
+        if (bindingResult.hasErrors()) {
+            List<ErrorResDto> errors = new ArrayList<>();
+
+            bindingResult.getAllErrors().forEach(objectError -> {
+                FieldError fieldError = (FieldError) objectError;
+
+                errors.add(ErrorResDto.builder()
+                                .objectName(fieldError.getObjectName())
+                                .field(fieldError.getField())
+                                .message(fieldError.getDefaultMessage())
+                                .build());
+            });
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         }
 
         petService.register(params, file, loginUser.getId());

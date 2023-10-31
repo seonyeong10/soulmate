@@ -18,7 +18,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 //페이지별 권한 추가
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/my/*").hasRole("USER")
+                        //.requestMatchers("/my/*").hasRole("USER")
                         .anyRequest().permitAll())
                 //사용자 정의 로그인
                 .formLogin(form -> form.loginPage("/auth").permitAll().loginProcessingUrl("/api/auth").defaultSuccessUrl("/"));

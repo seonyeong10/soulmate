@@ -7,7 +7,6 @@ import com.soulmate.domain.enums.Role;
 import com.soulmate.domain.repository.MemberRepository;
 import com.soulmate.domain.repository.PetRepository;
 import com.soulmate.web.dto.request.PetReqDto;
-import com.soulmate.web.dto.response.ResultResDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,8 +18,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -2,21 +2,17 @@ package com.soulmate.service;
 
 import com.soulmate.domain.Member;
 import com.soulmate.domain.Pet;
-import com.soulmate.domain.attachFile.AttachFile;
 import com.soulmate.domain.attachFile.PetAttachFile;
 import com.soulmate.domain.repository.AttachFileRepository;
 import com.soulmate.domain.repository.MemberRepository;
 import com.soulmate.domain.repository.PetRepository;
 import com.soulmate.web.dto.request.PetReqDto;
-import com.soulmate.web.dto.response.ResultResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

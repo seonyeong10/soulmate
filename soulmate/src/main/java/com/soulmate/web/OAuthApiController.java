@@ -1,6 +1,7 @@
 package com.soulmate.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soulmate.domain.enums.PlatformType;
 import com.soulmate.service.oauth.OAuthService;
@@ -47,7 +48,7 @@ public class OAuthApiController {
             HttpServletResponse response
     ) throws JsonProcessingException, IOException {
         PlatformType platformType = PlatformType.valueOf(platform.toUpperCase());
-        OAuthCallbackReqDto callbackDto = new ObjectMapper().convertValue(params, OAuthCallbackReqDto.class);
+        OAuthCallbackReqDto callbackDto = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).convertValue(params, OAuthCallbackReqDto.class);
 
         if (callbackDto.getError() != null) {
             log.error(callbackDto.getError() + " " + callbackDto.getErrorDescription());

@@ -8,7 +8,7 @@
     <div>
         <th:block th:if="${session.user != null}">
             안녕하세요, <span th:text="${session.user.name}"></span>!
-            <a href="/my"></a>
+            <a href="/my">My page</a>
             <a href="/auth/logout">Logout</a>
         </th:block>
         <th:block th:if="${session.user == null}">

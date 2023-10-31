@@ -1,5 +1,6 @@
 package com.soulmate.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -18,9 +19,11 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseTimeEntity {
     @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createdDate;
 
     @CreatedBy
+    @Column(updatable = false)
     private String createdBy;
 
     @LastModifiedDate

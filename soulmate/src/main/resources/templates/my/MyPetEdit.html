@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Soulmate</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
 </head>
 <body>
     <div>
@@ -11,6 +13,115 @@
 
     <h1>Register pet</h1>
 
-    <form method="post"></form>
+    <form method="post" id="frm">
+        <table>
+            <tr>
+                <th>Picture</th>
+                <th><input type="file" name="file"/></th>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <th><input type="text" name="name"/></th>
+            </tr>
+            <tr>
+                <th>kind</th>
+                <th>
+                    <select name="kind">
+                        <option vlaue="">품종</option>
+                        <option value="pomeranian">포메라니안</option>
+                        <option value="chihuahua">치와와</option>
+                        <option value="maltese">말티즈</option>
+                    </select>
+                </th>
+            </tr>
+            <tr>
+                <th>weight</th>
+                <th><input type="text" name="weight"/></th>
+            </tr>
+            <tr>
+                <th>age</th>
+                <th><input type="text" name="age"/></th>
+            </tr>
+            <tr>
+                <th>sex</th>
+                <th>
+                    <input type="radio" name="sex" value="M"/>Male
+                    <input type="radio" name="sex" value="F"/>Female
+                    <input type="radio" name="sex" value="N"/>Neutral
+                </th>
+            </tr>
+            <tr>
+                <th>neutral</th>
+                <th>
+                    <input type="radio" name="neutral" value="true"/> Y
+                    <input type="radio" name="neutral" value="false"/> N
+                </th>
+            </tr>
+            <tr>
+                <th>desc</th>
+                <th><textarea name="desc"></textarea></th>
+            </tr>
+            <tr>
+                <input type="submit" value="submit"/>
+                <input type="button" value="cancel" class="cancel-btn"/>
+            </tr>
+        </table>
+    </form>
 </body>
+<script>
+    let pet = {
+        name: ''
+        ,kind: ''
+        ,weight: ''
+        ,age: ''
+        ,sex: ''
+        ,neutral: ''
+        ,desc: ''
+    };
+    let attachFile;
+
+    function onChangeFile(e) {
+        attachFile = e.target.files[0];
+    }
+    document.querySelector("input[name=file]").addEventListener('change', (e) => onChangeFile(e));;
+
+    function onSubmit(e) {
+        e.preventDefault();
+
+        let fd = new FormData(document.querySelector('#frm'));
+
+        for (const key of Object.keys(pet)) {
+            pet[key] = fd.get(key);
+        }
+
+        //formData를 필요한 데이터만으로 재구성
+        fd = new FormData();
+
+        //json 타입은 Blob로 감싸지 않으면 415 발생
+        fd.append("pet", new Blob([JSON.stringify(pet)], { type: "application/json" }));
+        fd.append("file", attachFile);
+
+        //formData 확인하기
+        const entries = fd.entries();
+        for (const pair of entries) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
+
+        const headers = {
+            "Content-Type": "multipart/form-data"
+        };
+
+        axios.post("/api/v1/my/pets/edit", fd, {
+            headers: headers
+        }).then(res => {
+            console.log(res);
+        }).catch(err => console.log(err));
+    }
+    document.querySelector('#frm').addEventListener('submit', (e) => onSubmit(e));
+
+    function onCancel() {
+        console.log('cancel!');
+    }
+    document.querySelector('.cancel-btn').addEventListener('submit', (e) => onSubmit(e));
+</script>
 </html>

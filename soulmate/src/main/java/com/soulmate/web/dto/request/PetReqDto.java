@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter @ToString
 public class PetReqDto {
