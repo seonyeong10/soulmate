@@ -1,5 +1,6 @@
 package com.soulmate.service;
 
+import com.soulmate.config.auth.dto.SessionUser;
 import com.soulmate.domain.Member;
 import com.soulmate.domain.Pet;
 import com.soulmate.domain.attachFile.PetAttachFile;
@@ -25,8 +26,8 @@ public class PetService {
 
     private final FileUtil fileUtil;
 
-    public Long register(PetReqDto request, MultipartFile file, Long memberId) throws IOException {
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다. member_id = " + memberId));
+    public Long register(PetReqDto request, MultipartFile file, SessionUser user) throws IOException {
+        Member member = memberRepository.findById(user.getId()).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다. member_id = " + user.getId()));
 
         Pet pet = request.toPetEntity();
         pet.addGuardian(member);

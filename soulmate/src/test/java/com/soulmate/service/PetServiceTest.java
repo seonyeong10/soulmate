@@ -1,5 +1,6 @@
 package com.soulmate.service;
 
+import com.soulmate.config.auth.dto.SessionUser;
 import com.soulmate.domain.Member;
 import com.soulmate.domain.Pet;
 import com.soulmate.domain.enums.PlatformType;
@@ -58,12 +59,12 @@ class PetServiceTest {
         MultipartFile file = new MockMultipartFile("file", "pet.txt", MediaType.TEXT_PLAIN_VALUE, ":)".getBytes());
         
         //when
-        Long savedId = petService.register(request, file, member.getId());
+        Long savedId = petService.register(request, file, new SessionUser(member));
         Pet pet = petRepository.findById(savedId).orElseThrow(() -> new NoSuchElementException("반려동물이 존재하지 않습니다. pet_id = " + savedId));
 
         //then
-        System.out.println("==========================================");
-        System.out.println(pet.getId());
+        //System.out.println("==========================================");
+        //System.out.println(pet.getId());
         assertEquals(savedId, pet.getId());
         assertEquals(request.getName(), pet.getName());
         assertEquals(request.getKind(), pet.getKind());

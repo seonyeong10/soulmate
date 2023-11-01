@@ -1,11 +1,11 @@
 package com.soulmate.web;
 
+import com.soulmate.config.auth.LoginUser;
+import com.soulmate.config.auth.dto.SessionUser;
 import com.soulmate.service.PetService;
-import com.soulmate.web.dto.oauth.UserResDto;
 import com.soulmate.web.dto.request.PetReqDto;
 import com.soulmate.web.dto.response.ErrorResDto;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -34,17 +32,20 @@ public class PetApiController {
     public ResponseEntity register(
             @RequestPart(name = "pet") PetReqDto params,
             @RequestPart(name = "file", required = false) MultipartFile file,
+            @LoginUser SessionUser user,
             BindingResult bindingResult,
             HttpServletRequest request
     ) throws IOException {
+        /*
         HttpSession session = request.getSession();
         UserResDto loginUser = (UserResDto) session.getAttribute("user");
+         */
 
         //System.out.println("logined : " + loginUser);
         System.out.printf("params: %s, file: %s\n", params.toString(), file.getOriginalFilename());
 
         //사용자 정보 없음
-        if (loginUser == null) {
+        if (user == null) {
             return ResponseEntity.badRequest().body("로그인 후 이용 가능합니다.");
         }
 
@@ -68,7 +69,7 @@ public class PetApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         }
 
-        petService.register(params, file, loginUser.getId());
+        petService.register(params, file, user);
 
         return ResponseEntity.ok("success");
     }
