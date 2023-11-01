@@ -1,4 +1,4 @@
-package com.soulmate.config;
+package com.soulmate.config.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +13,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final CustomOAuth2UserService customOAuth2UserService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -21,7 +23,10 @@ public class SecurityConfig {
                         //.requestMatchers("/my/*").hasRole("USER")
                         .anyRequest().permitAll())
                 //사용자 정의 로그인
-                .formLogin(form -> form.loginPage("/auth").permitAll().loginProcessingUrl("/api/auth").defaultSuccessUrl("/"));
+                //.formLogin(form -> form.loginPage("/auth").permitAll().loginProcessingUrl("/api/auth").defaultSuccessUrl("/"))
+                .oauth2Login(oauth2Configurer -> oauth2Configurer
+                        .loginPage("/auth")
+                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService)));
         return http.build();
     }
 }

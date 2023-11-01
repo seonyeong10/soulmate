@@ -39,8 +39,8 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER; //권한
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Pet> pets = new ArrayList<>();
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Pet> pets = new ArrayList<>();
 
     @Builder
     public Member(Long id, String email, String password, String name, String nickname, String mobile, String picture, PlatformType platformType, Role role) {
@@ -57,5 +57,12 @@ public class Member extends BaseTimeEntity {
 
     public void addRole(Role role) {
         this.role = role;
+    }
+
+    public Member update(String name, String picture) {
+        this.name = name;
+        this.picture = picture;
+
+        return this;
     }
 }

@@ -7,14 +7,11 @@
 </head>
 <body>
     <a href="/">Home</a>
-    <div><button id="oauth-google" onclick="onClickLogin('google')">Google Login</button></div>
-    <div><button id="oauth-naver" onclick="onClickLogin('naver')">Naver Login</button></div>
-    <div><button id="oauth-kakao" onclick="onClickLogin('kakao')">Kakao Login</button></div>
+    <!-- 소셜 로그인 URL은 prop -->
+    <div><a id="oauth-google" href="/oauth2/authorization/google">Google Login</a></div>
+    <div><a id="oauth-naver"  href="/oauth2/authorization/naver">Naver Login</a></div>
+    <div><a id="oauth-kakao"  href="/oauth2/authorization/kakao">Kakao Login</a></div>
 </body>
 <script>
-    function onClickLogin(platform) {
-        console.log("platform", platform);
-        location.href = "http://localhost:8080/api/v1/auth/code/" + platform;
-    }
 </script>
 </html>
