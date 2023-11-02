@@ -1,13 +1,14 @@
 package com.soulmate.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.soulmate.config.auth.dto.SessionUser;
 import com.soulmate.domain.Member;
+import com.soulmate.domain.Pet;
 import com.soulmate.domain.enums.PlatformType;
 import com.soulmate.domain.enums.Role;
 import com.soulmate.domain.repository.MemberRepository;
-import com.soulmate.web.dto.oauth.UserResDto;
+import com.soulmate.domain.repository.PetRepository;
 import com.soulmate.web.dto.request.PetReqDto;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
@@ -24,11 +24,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -47,10 +45,15 @@ class PetApiControllerTest {
     MemberRepository memberRepository;
 
     @Autowired
+    PetRepository petRepository;
+
+    @Autowired
     TestRestTemplate restTemplate;
 
     @Autowired
     WebApplicationContext context;
+
+    private Member mockMember;
 
     private MockMvc mvc;
 
@@ -61,9 +64,9 @@ class PetApiControllerTest {
         mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 
         //회원 생성하기
-        Member mockMember = memberRepository.save(Member.builder().name("회원").role(Role.USER).platformType(PlatformType.GOOGLE).build());
+        mockMember = memberRepository.save(Member.builder().name("회원").role(Role.USER).platformType(PlatformType.GOOGLE).build());
         session = new MockHttpSession();
-        session.setAttribute("user", new UserResDto(mockMember));
+        session.setAttribute("user", new SessionUser(mockMember));
     }
 
     @Test
@@ -71,7 +74,7 @@ class PetApiControllerTest {
     public void Pet_등록된다 () throws Exception {
         //given
         PetReqDto pet = PetReqDto.builder()
-                .name("")
+                .name("쵸파")
                 .age(1)
                 .desc("테스트 중입니다.")
                 .kind("말티즈")
@@ -107,14 +110,19 @@ class PetApiControllerTest {
         //ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
         */
 
-        //then
         mvc.perform(
                 multipart(url)
                     .file(file)
                     .file(metadata)
                     .session(session))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
         ;
+
+        //then
+        List<Pet> all = petRepository.findAllByMemberId(mockMember.getId());
+
+        assertEquals(all.get(0).getName(), pet.getName());
+        assertEquals(all.get(0).getMember().getId(), mockMember.getId());
     }
 }

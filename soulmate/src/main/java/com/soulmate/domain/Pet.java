@@ -1,6 +1,5 @@
 package com.soulmate.domain;
 
-import com.soulmate.domain.attachFile.AttachFile;
 import com.soulmate.domain.attachFile.PetAttachFile;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

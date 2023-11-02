@@ -5,6 +5,7 @@ import com.soulmate.config.auth.dto.SessionUser;
 import com.soulmate.service.PetService;
 import com.soulmate.web.dto.request.PetReqDto;
 import com.soulmate.web.dto.response.ErrorResDto;
+import com.soulmate.web.dto.response.PetResDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,5 +73,22 @@ public class PetApiController {
         petService.register(params, file, user);
 
         return ResponseEntity.ok("success");
+    }
+
+    /**
+     * 회원의 펫을 모두 조회한다.
+     */
+    @GetMapping("")
+    public ResponseEntity findAll(
+            @LoginUser SessionUser user
+    ) {
+        //사용자 정보 없음
+        if (user == null) {
+            return ResponseEntity.badRequest().body("로그인 후 이용 가능합니다.");
+        }
+
+        List<PetResDto> response = petService.findAll(user);
+
+        return ResponseEntity.ok(response);
     }
 }

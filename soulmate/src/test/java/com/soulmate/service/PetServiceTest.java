@@ -8,6 +8,7 @@ import com.soulmate.domain.enums.Role;
 import com.soulmate.domain.repository.MemberRepository;
 import com.soulmate.domain.repository.PetRepository;
 import com.soulmate.web.dto.request.PetReqDto;
+import com.soulmate.web.dto.response.PetResDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,11 +65,32 @@ class PetServiceTest {
         Pet pet = petRepository.findById(savedId).orElseThrow(() -> new NoSuchElementException("반려동물이 존재하지 않습니다. pet_id = " + savedId));
 
         //then
-        //System.out.println("==========================================");
-        //System.out.println(pet.getId());
         assertEquals(savedId, pet.getId());
         assertEquals(request.getName(), pet.getName());
         assertEquals(request.getKind(), pet.getKind());
     }
 
+    @Test
+    public void pet_findAll_test () throws Exception {
+        //given
+        Pet saved = Pet.builder()
+                .name("쵸파")
+                .age(1)
+                .desc("테스트 중입니다.")
+                .kind("말티즈")
+                .sex("F")
+                .neutral(false)
+                .weight(5)
+                .build();
+        saved.addGuardian(member);
+
+        petRepository.save(saved);
+
+        //when
+        List<PetResDto> all = petService.findAll(new SessionUser(member));
+
+        //then
+        assertEquals(saved.getName(), all.get(0).getName());
+        assertEquals(saved.getKind(), all.get(0).getKind());
+    }
 }
