@@ -34,8 +34,7 @@ public class PetApiController {
             @RequestPart(name = "pet") PetReqDto params,
             @RequestPart(name = "file", required = false) MultipartFile file,
             @LoginUser SessionUser user,
-            BindingResult bindingResult,
-            HttpServletRequest request
+            BindingResult bindingResult
     ) throws IOException {
         /*
         HttpSession session = request.getSession();
@@ -90,5 +89,63 @@ public class PetApiController {
         List<PetResDto> response = petService.findAll(user);
 
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 펫을 수정한다.
+     */
+    @PostMapping("/edit/{petId}")
+    public ResponseEntity update(
+            @RequestPart(name = "pet") PetReqDto params,
+            @RequestPart(name = "file", required = false) MultipartFile file,
+            @PathVariable(name = "petId") Long petId,
+            @LoginUser SessionUser user,
+            BindingResult bindingResult
+    ) throws IOException {
+        //사용자 확인
+        if (user == null) {
+            return ResponseEntity.badRequest().body("로그인 후 이용 가능합니다.");
+        }
+
+        //유효성 확인
+        validator.validate(params, bindingResult);
+
+        //유효하지 않은 파라미터
+        if (bindingResult.hasErrors()) {
+            List<ErrorResDto> errors = new ArrayList<>();
+
+            bindingResult.getAllErrors().forEach(objectError -> {
+                FieldError fieldError = (FieldError) objectError;
+
+                errors.add(ErrorResDto.builder()
+                        .objectName(fieldError.getObjectName())
+                        .field(fieldError.getField())
+                        .message(fieldError.getDefaultMessage())
+                        .build());
+            });
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        }
+
+        Long result = petService.update(petId, user, params, file);
+
+        return ResponseEntity.ok(result > 0 ? "success" : "fail");
+    }
+
+    /**
+     * 펫을 삭제한다.
+     */
+    @DeleteMapping("/{petId}")
+    public Long delete(
+            @PathVariable(name = "petId") Long petId,
+            @LoginUser SessionUser user
+    ) {
+        //사용자 확인
+        if (user == null) {
+            return -1L;
+        }
+
+        petService.delete(petId, user.getId());
+        return petId;
     }
 }

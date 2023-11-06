@@ -24,14 +24,15 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -124,5 +125,88 @@ class PetApiControllerTest {
 
         assertEquals(all.get(0).getName(), pet.getName());
         assertEquals(all.get(0).getMember().getId(), mockMember.getId());
+    }
+
+    @Test
+    @WithMockUser("USER")
+    @Transactional
+    public void Pet_수정된다 () throws Exception {
+        //given
+        Pet saved = Pet.builder()
+                .name("쵸파")
+                .age(1)
+                .desc("테스트 중입니다.")
+                .kind("말티즈")
+                .sex("F")
+                .neutral(false)
+                .weight(5)
+                .build();
+        saved.addGuardian(mockMember);
+        Long savedId = petRepository.save(saved).getId();
+
+        PetReqDto pet = PetReqDto.builder()
+                .name("수정후")
+                .age(3)
+                .desc("테스트 중입니다.")
+                .kind("말티즈")
+                .sex("F")
+                .neutral(false)
+                .weight(5)
+                .build();
+        MockMultipartFile file = new MockMultipartFile("file", "pet.txt", MediaType.TEXT_PLAIN_VALUE, ":)".getBytes());
+
+        String petJson = new ObjectMapper().writeValueAsString(pet);
+        MockMultipartFile metadata = new MockMultipartFile("pet", "", "application/json", petJson.getBytes());
+
+        String url = "http://localhost:" + port + "/api/v1/my/pets/edit/" + saved.getId();
+
+        //when
+        mvc.perform(
+                multipart(url)
+                        .file(file)
+                        .file(metadata)
+                        .session(session))
+                .andDo(print())
+                .andExpect(status().isOk())
+        ;
+
+        //then
+        Pet find = petRepository.findOneByMemberId(saved.getId(), mockMember.getId()).orElseThrow(() -> new NoSuchElementException("반려동물이 존재하지 않습니다. pet_id = " + savedId));
+
+        assertEquals(pet.getName(), find.getName());
+        assertEquals(pet.getAge(), find.getAge());
+        assertEquals(file.getOriginalFilename(), find.getAttachFiles().get(0).getOriginalName());
+    }
+
+    @Test
+    @WithMockUser("USER")
+    @Transactional
+    public void Pet_삭제된다 () throws Exception {
+        //given
+        Pet saved = Pet.builder()
+                .name("쵸파")
+                .age(1)
+                .desc("테스트 중입니다.")
+                .kind("말티즈")
+                .sex("F")
+                .neutral(false)
+                .weight(5)
+                .build();
+        saved.addGuardian(mockMember);
+        Long savedId = petRepository.save(saved).getId();
+
+        String url = "http://localhost:" + port + "/api/v1/my/pets/" + saved.getId();
+
+        //when
+        mvc.perform(
+                delete(url)
+                .session(session)
+        ).andDo(print())
+         .andExpect(status().isOk());
+
+        //then
+        List<Pet> all = petRepository.findAllByMemberId(mockMember.getId());
+
+        assertEquals(0, all.size());
     }
 }

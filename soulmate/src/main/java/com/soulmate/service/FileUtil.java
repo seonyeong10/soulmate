@@ -67,4 +67,15 @@ public class FileUtil {
 
         return saved;
     }
+
+    public boolean delete(AttachFile file) {
+        File target = new File(file.getDir() + File.separator + file.getSavedName());
+
+        if (target.exists()) {
+            return target.delete();
+        } else {
+            log.info("파일이 존재하지 않습니다. file_id = " + file.getId());
+            return false;
+        }
+    }
 }

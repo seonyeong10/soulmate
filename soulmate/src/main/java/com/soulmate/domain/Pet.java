@@ -1,6 +1,7 @@
 package com.soulmate.domain;
 
 import com.soulmate.domain.attachFile.PetAttachFile;
+import com.soulmate.web.dto.request.PetReqDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,7 +32,8 @@ public class Pet extends BaseTimeEntity {
     @Lob
     private String desc;
 
-    @OneToMany(mappedBy = "pet")
+    //부모가 삭제될 때 함께 삭제하고, 연관관계가 끊어진 엔티티는 삭제
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetAttachFile> attachFiles = new ArrayList<>();
 
     @Builder
@@ -45,6 +47,16 @@ public class Pet extends BaseTimeEntity {
         this.sex = sex;
         this.neutral = neutral;
         this.desc = desc;
+    }
+
+    public void update(PetReqDto request) {
+        name = request.getName();
+        kind = request.getKind();
+        weight = request.getWeight();
+        age = request.getAge();
+        sex = request.getSex();
+        neutral = request.getNeutral();
+        desc = request.getDesc();
     }
 
     //== 연관관계 메서드 ==//

@@ -93,4 +93,61 @@ class PetServiceTest {
         assertEquals(saved.getName(), all.get(0).getName());
         assertEquals(saved.getKind(), all.get(0).getKind());
     }
+
+    @Test
+    public void pet_update () throws Exception {
+        //given
+        Pet saved = Pet.builder()
+                .name("쵸파")
+                .age(1)
+                .desc("테스트 중입니다.")
+                .kind("말티즈")
+                .sex("F")
+                .neutral(false)
+                .weight(5)
+                .build();
+        saved.addGuardian(member);
+        MultipartFile file = new MockMultipartFile("file", "update.txt", MediaType.TEXT_PLAIN_VALUE, ":)".getBytes());
+
+        petRepository.save(saved);
+
+        //when
+        PetReqDto request = PetReqDto.builder()
+                .name("수정")
+                .age(0)
+                .build();
+
+        petService.update(saved.getId(), new SessionUser(member), request, file);
+
+        //then
+        Pet find = petRepository.findById(saved.getId()).orElseThrow(() -> new NoSuchElementException("반려동물이 존재하지 않습니다. pet_id = " + saved.getId()));
+        assertEquals(request.getName(), find.getName());
+        assertEquals(request.getAge(), find.getAge());
+        assertEquals(file.getOriginalFilename(), find.getAttachFiles().get(0).getOriginalName());
+    }
+
+    @Test
+    public void pet_delete () throws Exception {
+        //given
+        Pet saved = Pet.builder()
+                .name("쵸파")
+                .age(1)
+                .desc("테스트 중입니다.")
+                .kind("말티즈")
+                .sex("F")
+                .neutral(false)
+                .weight(5)
+                .build();
+        saved.addGuardian(member);
+
+        petRepository.save(saved);
+
+        //when
+        petService.delete(saved.getId(), member.getId());
+
+        //then
+        List<Pet> all = petRepository.findAllByMemberId(member.getId());
+
+        assertEquals(0, all.size());
+    }
 }
