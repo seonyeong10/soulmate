@@ -43,7 +43,6 @@ public class PetReqDto {
                 .weight(weight)
                 .age(age)
                 .sex(sex)
-                .desc(desc)
                 .build();
     }
 }

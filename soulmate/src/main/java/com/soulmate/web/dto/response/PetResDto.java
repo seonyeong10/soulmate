@@ -33,7 +33,6 @@ public class PetResDto {
         weight = pet.getWeight();
         age = pet.getAge();
         sex = pet.getSex();
-        desc = pet.getDesc();
         pet.getAttachFiles().forEach(at -> files.add(at.getId()));
     }
 }
