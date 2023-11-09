@@ -28,16 +28,13 @@ public class Pet extends BaseTimeEntity {
     private int weight;
     private int age;
     private String sex;
-    private boolean neutral;
-    @Lob
-    private String desc;
 
     //부모가 삭제될 때 함께 삭제하고, 연관관계가 끊어진 엔티티는 삭제
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetAttachFile> attachFiles = new ArrayList<>();
 
     @Builder
-    public Pet(Long id, Member member, String name, String kind, int weight, int age, String sex, boolean neutral, String desc, String photo) {
+    public Pet(Long id, Member member, String name, String kind, int weight, int age, String sex, String photo) {
         this.id = id;
         this.member = member;
         this.name = name;
@@ -45,8 +42,6 @@ public class Pet extends BaseTimeEntity {
         this.weight = weight;
         this.age = age;
         this.sex = sex;
-        this.neutral = neutral;
-        this.desc = desc;
     }
 
     public void update(PetReqDto request) {
@@ -55,8 +50,6 @@ public class Pet extends BaseTimeEntity {
         weight = request.getWeight();
         age = request.getAge();
         sex = request.getSex();
-        neutral = request.getNeutral();
-        desc = request.getDesc();
     }
 
     //== 연관관계 메서드 ==//

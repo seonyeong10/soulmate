@@ -54,7 +54,6 @@ class PetServiceTest {
                 .desc("테스트 중입니다.")
                 .kind("말티즈")
                 .sex("F")
-                .neutral(false)
                 .weight(5)
                 .build();
 
@@ -76,10 +75,8 @@ class PetServiceTest {
         Pet saved = Pet.builder()
                 .name("쵸파")
                 .age(1)
-                .desc("테스트 중입니다.")
                 .kind("말티즈")
                 .sex("F")
-                .neutral(false)
                 .weight(5)
                 .build();
         saved.addGuardian(member);
@@ -100,10 +97,8 @@ class PetServiceTest {
         Pet saved = Pet.builder()
                 .name("쵸파")
                 .age(1)
-                .desc("테스트 중입니다.")
                 .kind("말티즈")
                 .sex("F")
-                .neutral(false)
                 .weight(5)
                 .build();
         saved.addGuardian(member);
@@ -132,10 +127,8 @@ class PetServiceTest {
         Pet saved = Pet.builder()
                 .name("쵸파")
                 .age(1)
-                .desc("테스트 중입니다.")
                 .kind("말티즈")
                 .sex("F")
-                .neutral(false)
                 .weight(5)
                 .build();
         saved.addGuardian(member);

@@ -23,19 +23,16 @@ public class PetReqDto {
 
     private String sex;
 
-    private Boolean neutral;
-
     private String desc;
 
 
     @Builder
-    public PetReqDto(String name, String kind, int weight, int age, String sex, boolean neutral, String desc) {
+    public PetReqDto(String name, String kind, int weight, int age, String sex, String desc) {
         this.name = name;
         this.kind = kind;
         this.weight = weight;
         this.age = age;
         this.sex = sex;
-        this.neutral = neutral;
         this.desc = desc;
     }
 
@@ -46,7 +43,6 @@ public class PetReqDto {
                 .weight(weight)
                 .age(age)
                 .sex(sex)
-                .neutral(neutral)
                 .desc(desc)
                 .build();
     }

@@ -36,12 +36,6 @@ public class PetApiController {
             @LoginUser SessionUser user,
             BindingResult bindingResult
     ) throws IOException {
-        /*
-        HttpSession session = request.getSession();
-        UserResDto loginUser = (UserResDto) session.getAttribute("user");
-         */
-
-        //System.out.println("logined : " + loginUser);
         System.out.printf("params: %s, file: %s\n", params.toString(), file.getOriginalFilename());
 
         //사용자 정보 없음

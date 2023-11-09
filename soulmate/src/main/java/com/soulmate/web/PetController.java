@@ -43,10 +43,11 @@ public class PetController {
         try {
             PetResDto find = petService.findOne(petId, user);
             model.addAttribute("pet", find);
+            model.addAttribute("isModify", false);
         } catch (NoSuchElementException e) {
             model.addAttribute("error", "반려동물을 찾을 수 없습니다.");
         }
 
-        return "my/MyPetInfo";
+        return "my/MyPetModify";
     }
 }

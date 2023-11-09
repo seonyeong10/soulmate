@@ -138,7 +138,6 @@ class PetApiControllerTest {
                 .desc("테스트 중입니다.")
                 .kind("말티즈")
                 .sex("F")
-                .neutral(false)
                 .weight(5)
                 .build();
         saved.addGuardian(mockMember);
@@ -150,7 +149,6 @@ class PetApiControllerTest {
                 .desc("테스트 중입니다.")
                 .kind("말티즈")
                 .sex("F")
-                .neutral(false)
                 .weight(5)
                 .build();
         MockMultipartFile file = new MockMultipartFile("file", "pet.txt", MediaType.TEXT_PLAIN_VALUE, ":)".getBytes());
@@ -189,7 +187,6 @@ class PetApiControllerTest {
                 .desc("테스트 중입니다.")
                 .kind("말티즈")
                 .sex("F")
-                .neutral(false)
                 .weight(5)
                 .build();
         saved.addGuardian(mockMember);

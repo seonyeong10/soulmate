@@ -11,6 +11,7 @@ import java.util.List;
 @Getter @Setter
 @ToString
 public class PetResDto {
+    private Long id;
     private String name;
 
     private String kind;
@@ -26,6 +27,7 @@ public class PetResDto {
     private List<Long> files = new ArrayList<>();
 
     public PetResDto(Pet pet) {
+        id = pet.getId();
         name = pet.getName();
         kind = pet.getKind();
         weight = pet.getWeight();
