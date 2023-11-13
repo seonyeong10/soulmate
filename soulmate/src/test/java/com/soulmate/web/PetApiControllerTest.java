@@ -85,7 +85,7 @@ class PetApiControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "pet.txt", MediaType.TEXT_PLAIN_VALUE, ":)".getBytes());
 
         String petJson = new ObjectMapper().writeValueAsString(pet);
-        MockMultipartFile metadata = new MockMultipartFile("pet", "", "application/json", petJson.getBytes());
+        MockMultipartFile metadata = new MockMultipartFile("dto", "", "application/json", petJson.getBytes());
 
         String url = "http://localhost:" + port + "/api/v1/my/pets/edit";
 
@@ -153,7 +153,7 @@ class PetApiControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "pet.txt", MediaType.TEXT_PLAIN_VALUE, ":)".getBytes());
 
         String petJson = new ObjectMapper().writeValueAsString(pet);
-        MockMultipartFile metadata = new MockMultipartFile("pet", "", "application/json", petJson.getBytes());
+        MockMultipartFile metadata = new MockMultipartFile("dto", "", "application/json", petJson.getBytes());
 
         String url = "http://localhost:" + port + "/api/v1/my/pets/edit/" + saved.getId();
 

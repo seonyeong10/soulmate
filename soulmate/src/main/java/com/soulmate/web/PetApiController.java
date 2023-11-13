@@ -31,7 +31,7 @@ public class PetApiController {
 
     @PostMapping("/edit")
     public ResponseEntity register(
-            @RequestPart(name = "pet") PetReqDto params,
+            @RequestPart(name = "dto") PetReqDto params,
             @RequestPart(name = "file", required = false) MultipartFile file,
             @LoginUser SessionUser user,
             BindingResult bindingResult
@@ -90,7 +90,7 @@ public class PetApiController {
      */
     @PostMapping("/edit/{petId}")
     public ResponseEntity update(
-            @RequestPart(name = "pet") PetReqDto params,
+            @RequestPart(name = "dto") PetReqDto params,
             @RequestPart(name = "file", required = false) MultipartFile file,
             @PathVariable(name = "petId") Long petId,
             @LoginUser SessionUser user,

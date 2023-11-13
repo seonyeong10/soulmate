@@ -17,42 +17,43 @@
         <table>
             <tr>
                 <th>Picture</th>
-                <th><input type="file" name="file" class="pet-info"/></th>
+                <td>
+                    <input type="file" name="file" class="pet-info"/>
+                    <div>
+                        <img src="" id="preview" width="100" height="100"/>
+                    </div>
+                </td>
             </tr>
             <tr>
                 <th>Name</th>
-                <th><input type="text" name="name" th:value="${pet.name}" class="pet-info"/></th>
+                <td><input type="text" name="name" th:value="${pet.name}" class="pet-info"/></td>
             </tr>
             <tr>
                 <th>kind</th>
-                <th>
+                <td>
                     <select name="kind" th:value="${pet.kind}" class="pet-info">
                         <option vlaue="">품종</option>
                         <option value="pomeranian">포메라니안</option>
                         <option value="chihuahua">치와와</option>
                         <option value="maltese">말티즈</option>
                     </select>
-                </th>
+                </td>
             </tr>
             <tr>
                 <th>weight</th>
-                <th><input type="text" name="weight" th:value="${pet.weight}" class="pet-info"/></th>
+                <td><input type="text" name="weight" th:value="${pet.weight}" class="pet-info"/></td>
             </tr>
             <tr>
                 <th>age</th>
-                <th><input type="text" name="age" th:value="${pet.age}" class="pet-info"/></th>
+                <td><input type="text" name="age" th:value="${pet.age}" class="pet-info"/></td>
             </tr>
             <tr>
                 <th>sex</th>
-                <th>
+                <td>
                     <input type="radio" name="sex" value="M" th:checked="${pet.sex} == 'M'" class="pet-info"/>Male
                     <input type="radio" name="sex" value="F" th:checked="${pet.sex} == 'F'" class="pet-info"/>Female
                     <input type="radio" name="sex" value="N" th:checked="${pet.sex} == 'N'" class="pet-info"/>Neutral
-                </th>
-            </tr>
-            <tr>
-                <th>desc</th>
-                <th><textarea name="desc" th:value="${pet.desc}" th:text="${pet.desc}" class="pet-info"></textarea></th>
+                </td>
             </tr>
             <tr>
                 <input type="button" value="delete" class="delete-btn"/>
@@ -62,9 +63,12 @@
         </table>
     </form>
 </body>
+<script src="/js/formAction.js"></script>
+<script src="/js/fileAction.js"></script>
 <script th:inline="javascript">
     let pet = {
-        name: ''
+        id: 0
+        ,name: ''
         ,kind: ''
         ,weight: ''
         ,age: ''
@@ -90,7 +94,7 @@
         }
     }
 
-    /* 수정하기 모드로 변경하기 */
+    /* 수정하기 모드로 바꾸기 */
     function setModeModify() {
         canModify = true;
 
@@ -101,11 +105,12 @@
     /* 첨부파일 등록하기 */
     function onChangeFile(e) {
         attachFile = e.target.files[0];
+        fileAction.readURL(e);
     }
     document.querySelector("input[name=file]").addEventListener('change', (e) => onChangeFile(e));
 
-    /* 반려동물 데이터 수정하기 */
-    function onSubmit(e) {
+    /* 반려동물 수정하기 */
+    function beforeOnSubmit(e) {
         e.preventDefault();
 
         if (!canModify) {
@@ -113,39 +118,10 @@
             return;
         }
 
-        let fd = new FormData(document.querySelector('#frm'));
         const petId = [[${pet.id}]];
-
-        for (const key of Object.keys(pet)) {
-            pet[key] = fd.get(key);
-        }
-
-        //formData를 필요한 데이터만으로 재구성
-        fd = new FormData();
-
-        //json 타입은 Blob로 감싸지 않으면 415 발생
-        fd.append("pet", new Blob([JSON.stringify(pet)], { type: "application/json" }));
-        if (attachFile != null) {
-            fd.append("file", attachFile);
-        }
-
-        //formData 확인하기
-        const entries = fd.entries();
-        for (const pair of entries) {
-            console.log(pair[0] + ', ' + pair[1]);
-        }
-
-        const headers = {
-            "Content-Type": "multipart/form-data"
-        };
-
-        axios.post(`/api/v1/my/pets/edit/${petId}`, fd, {
-            headers: headers
-        }).then(res => {
-            console.log(res);
-        }).catch(err => console.log(err));
+        formAction.post(`/api/v1/my/pets/edit/${petId}`, pet, attachFile);
     }
-    document.querySelector('#frm').addEventListener('submit', (e) => onSubmit(e));
+    document.querySelector('#frm').addEventListener('submit', (e) => beforeOnSubmit(e));
 
     /* 반려동물 수정 취소하기 */
     function onCancel() {
